@@ -25,13 +25,9 @@
 
         <!-- functionality -->
         <script src="./resources/js/helpers/default.js"></script>
-        <script type="text/javascript">
-            fetch('./resources/else/flare.js')
-                .then(response => response.text())
-                .then(text => eval(text))
-                .then(data => {
-                    console.log(data);
-                })
+        <script type="module">
+            import { flareData } from './resources/else/flare.js';
+            console.log(flareData);
         </script>
     </body>
 </html>
