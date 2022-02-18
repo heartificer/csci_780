@@ -1,14 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // initialization
-    let scope = "population";
-    let data = {
-      name: treemapdata.name,
-      children: treemapdata[scope + 'Children']
-    };
+    let scope = "area";
+    let data = treemapdata;
     let width = 954, height = 924;
     let format = d3.format(",d");
     let name = d => d.ancestors().reverse().map(d => d.data.name).join("/");
+    let color = d => {
+      let min = 2784 + 1000;
+      let delta = 614;
+      let ordinal = d.data.areaOrdinal;
+      let relativeArea = min + (ordinal * delta);
+      let r = parseInt(relativeArea / 256);
+      let g = parseInt((relativeArea - (256 * r))/16);
+      let b = parseInt(relativeArea - (256 * r) - (16 * g));
+      let rgb = `#${[ r, g, b].map( v => (v.toString(16).length < 2 ? '0' : '') + v.toString(16)).join('')}`;
+      return rgb;
+    };
 
     // add toggle button (wiring up the toggle at a later date)
     let toggleButton = document.createElement("input");
@@ -59,8 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const treemap = data => d3.treemap()
         .tile(tile)
     (d3.hierarchy(data)
-        .sum(d => d.value)
-        .sort((a, b) => b.value - a.value))
+        .sum(d => d[scope])
+        .sort((a, b) => b[scope] - a[scope]))
 
     const position = (group, root) => {
         group.selectAll("g")
@@ -113,12 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
             .on("click", (event, d) => d === root ? zoomout(root) : zoomin(d));
     
         node.append("title")
-            .text(d => `${name(d)}: ${format(d.value)}`);
+            .text(d => `${name(d)}: ${format(d[scope])}`);
     
         node.append("rect")
             .attr("id", d => (d.leafUid = DOM.uid("leaf")).id)
-            .attr("fill", d => d === root ? "#fff" : d.children ? "#ccc" : "#ddd")
-            .attr("stroke", "#fff");
+            .attr("stroke", "#fff")
+            //.attr("fill", d => d === root ? "#fff" : d.children ? "#ccc" : "#ddd");
+            .attr("fill", d => {
+              let fillColor = d === root ? "#fff" : d.children ? "#ccc" : color(d);
+              return fillColor;
+            } );
+
     
         node.append("clipPath")
             .attr("id", d => (d.clipUid = DOM.uid("clip")).id)
@@ -129,9 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr("clip-path", d => d.clipUid)
             .attr("font-weight", d => d === root ? "bold" : null)
             .style("font-size", "10px")
+            .style("fill", "white")
           .selectAll("tspan")
           .data(d => {
-            let cleanedUpName = (d === root ? name(d) : d.data.name).split(/(?=[A-Z][^A-Z])/g).concat(format(d.value));
+            let cleanedUpName = (d === root ? name(d) : d.data.name).split(/(?=[A-Z][^A-Z])/g).concat(format(d.data[scope]));
             console.log(`name: ${cleanedUpName}`);
             return cleanedUpName;
           })
@@ -140,7 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr("y", (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.1 + i * 0.9}em`)
             .attr("fill-opacity", (d, i, nodes) => i === nodes.length - 1 ? 0.7 : null)
             .attr("font-weight", (d, i, nodes) => i === nodes.length - 1 ? "normal" : null)
-            .text(d => d);
+            .text(d => {
+              let value = d;
+              return value;
+            });
     
         group.call(position, root);
       }
