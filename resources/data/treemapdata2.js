@@ -1,5 +1,13 @@
 const states = [
-    { name:"California", population: "39538223", area: "163695", isCommonweath: "true", areaOrdinal: "3", populationOrdinal: "1" },
+    { name:"California", population: "39538223", area: "163695", isCommonweath: "true", areaOrdinal: "3", populationOrdinal: "1",
+        children: [
+            { name: 'Los Angeles', population: '3971883', area: '469' },
+            { name: 'San Diego', population: '1394928', area: '372' },
+            { name: 'San Jose', population: '1026908', area: '181' },
+            { name: 'San Franciso', population: '884521', area: '47' },
+            { name: 'Fresno', population: '527438', area: '112' },
+        ]
+    },
     { name:"Texas", population: "29145505", area: "268596", isCommonweath: "true", areaOrdinal: "2", populationOrdinal: "2" },
     { name:"Florida", population: "21538187", area: "65758", isCommonweath: "true", areaOrdinal: "22", populationOrdinal: "3" },
     { name:"New York", population: "20201249", area: "54555", isCommonweath: "true", areaOrdinal: "27", populationOrdinal: "4" },

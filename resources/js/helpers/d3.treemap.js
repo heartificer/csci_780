@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let format = d3.format(",d");
     let name = d => d.ancestors().reverse().map(d => d.data.name).join("/");
     let color = d => {
+      // placeholder - would like to do something interesting with color but this isn't quite right
+      //*
       let min = 2784 + 1000;
       let delta = 614;
       let ordinal = d.data.areaOrdinal;
@@ -15,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
       let g = parseInt((relativeArea - (256 * r))/16);
       let b = parseInt(relativeArea - (256 * r) - (16 * g));
       let rgb = `#${[ r, g, b].map( v => (v.toString(16).length < 2 ? '0' : '') + v.toString(16)).join('')}`;
+      //*/
+      //let rgb = "#ddd";
       return rgb;
     };
 
@@ -121,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .on("click", (event, d) => d === root ? zoomout(root) : zoomin(d));
     
         node.append("title")
-            .text(d => `${name(d)}: ${format(d[scope])}`);
+            .text(d => `${name(d)}: ${format(d.data[scope])}`);
     
         node.append("rect")
             .attr("id", d => (d.leafUid = DOM.uid("leaf")).id)
