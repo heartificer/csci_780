@@ -1,10 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // initialization
-    let data = treemapdata;
+    let scope = "population";
+    let data = {
+      name: treemapdata.name,
+      children: treemapdata[scope + 'Children']
+    };
     let width = 954, height = 924;
     let format = d3.format(",d");
-    let name = d => d.ancestors().reverse().map(d => d.data.name).join("/")
+    let name = d => d.ancestors().reverse().map(d => d.data.name).join("/");
+
+    // add toggle button
+    let toggleButton = document.createElement("input");
+    toggleButton.setAttribute("type", "button");
+    toggleButton.setAttribute("value", "US Population by State");
+
+    let container = document.getElementById("controls");
+    container.append(toggleButton);
     
     // these are functions that, when given a value, return an appropriate x and y offset
     const x = d3.scaleLinear().rangeRound([0, width]);
@@ -116,8 +128,13 @@ document.addEventListener('DOMContentLoaded', () => {
         node.append("text")
             .attr("clip-path", d => d.clipUid)
             .attr("font-weight", d => d === root ? "bold" : null)
+            .style("font-size", "10px")
           .selectAll("tspan")
-          .data(d => (d === root ? name(d) : d.data.name).split(/(?=[A-Z][^A-Z])/g).concat(format(d.value)))
+          .data(d => {
+            let cleanedUpName = (d === root ? name(d) : d.data.name).split(/(?=[A-Z][^A-Z])/g).concat(format(d.value));
+            console.log(`name: ${cleanedUpName}`);
+            return cleanedUpName;
+          })
           .join("tspan")
             .attr("x", 3)
             .attr("y", (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.1 + i * 0.9}em`)
