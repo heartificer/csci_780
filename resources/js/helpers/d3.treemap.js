@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let format = d3.format(",d");
     let name = d => d.ancestors().reverse().map(d => d.data.name).join("/");
 
-    // add toggle button
+    // add toggle button (wiring up the toggle at a later date)
     let toggleButton = document.createElement("input");
     toggleButton.setAttribute("type", "button");
     toggleButton.setAttribute("value", "US Population by State");
